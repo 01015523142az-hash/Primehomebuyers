@@ -187,9 +187,9 @@ function initOptOutForm() {
         return;
       }
       setMsg(msg, 'err', (r.data && r.data.error)
-        || 'We could not process that. Please text STOP to 307-441-5766 instead - that always works.');
+        || 'We could not process that. Please reply STOP to any text you have had from us - that always works.');
     }).catch(function () {
-      setMsg(msg, 'err', 'We could not reach our server. Please text STOP to 307-441-5766 instead - that always works.');
+      setMsg(msg, 'err', 'We could not reach our server. Please reply STOP to any text you have had from us - that always works.');
     }).then(function () {
       btn.disabled = false;
       btn.textContent = 'Remove my number';

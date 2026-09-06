@@ -19,7 +19,9 @@ from reportlab.platypus import (
     NextPageTemplate, PageBreak, Table, TableStyle, KeepTogether,
 )
 
-OUT = "phb/assets/guide/2026-as-is-home-sellers-blueprint.pdf"
+import os
+OUT = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                   "2026-as-is-home-sellers-blueprint.pdf")
 
 BRAND = colors.HexColor("#0f5a45")
 BRAND_DK = colors.HexColor("#093d2e")
@@ -30,7 +32,8 @@ INK_BODY = colors.HexColor("#2c3e39")
 INK_SOFT = colors.HexColor("#4d625c")
 LINE = colors.HexColor("#cbdcd4")
 
-PHONE = "307-441-5766"
+PHONE = "307-441-5766"      # voice
+SMS = "312-638-0895"        # the 10DLC-registered messaging number
 EMAIL = "support@primehomebuyers.casa"
 SITE = "primehomebuyers.casa"
 ADDRESS = "5830 E 2nd St, Casper, WY 82609"
@@ -75,7 +78,8 @@ def cover_bg(canvas, doc):
     canvas.rect(0, LETTER[1] - 0.34 * inch, LETTER[0], 0.34 * inch, stroke=0, fill=1)
     canvas.setFillColor(colors.HexColor("#9fc4b6"))
     canvas.setFont("Helvetica", 8.5)
-    canvas.drawString(0.9 * inch, 0.75 * inch, f"{SITE}   ·   {PHONE}   ·   {ADDRESS}")
+    canvas.drawString(0.9 * inch, 0.75 * inch,
+                      f"{SITE}   ·   call {PHONE}   ·   text {SMS}")
     canvas.restoreState()
 
 
@@ -339,7 +343,8 @@ def build():
         Spacer(1, 18),
     ]
     contact = Table([
-        ["Call or text", PHONE],
+        ["Call", PHONE],
+        ["Text", SMS],
         ["Email", EMAIL],
         ["Online", SITE],
         ["Office", ADDRESS],
@@ -364,9 +369,11 @@ def build():
         "an offer to buy any particular property. Laws on tenancies, evictions and "
         "probate differ by state and change over time — take advice from a licensed "
         "professional in your own state before acting on anything here.<br/><br/>"
-        "If you would rather we did not contact you, reply STOP to any text or use "
-        f"the opt-out form at {SITE}/sms-opt-out.html — that stops calls as well as "
-        "messages.", S["small"])]], colWidths=[LETTER[0] - 1.8 * inch])
+        "If you would rather we did not contact you, reply STOP to any text you have "
+        "received from us — replying to the message itself always works, whichever "
+        "number it came from. You can also use the opt-out form at "
+        f"{SITE}/sms-opt-out.html, which stops calls as well as messages.",
+        S["small"])]], colWidths=[LETTER[0] - 1.8 * inch])
     disc.setStyle(TableStyle([
         ("BACKGROUND", (0, 0), (-1, -1), colors.HexColor("#f8faf9")),
         ("BOX", (0, 0), (-1, -1), 0.6, LINE),
