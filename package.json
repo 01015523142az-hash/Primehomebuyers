@@ -6,6 +6,7 @@
   "scripts": {
     "dev": "node server.js",
     "build": "echo 'Static site ready'",
+    "lint": "node -c server.js && node -c assets/site.js",
     "start": "node server.js"
   },
   "dependencies": {
