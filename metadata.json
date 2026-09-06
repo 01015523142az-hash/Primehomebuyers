@@ -1,0 +1,8 @@
+{
+  "name": "PrimeHome Buyers",
+  "description": "PrimeHome Buyers makes direct cash offers on residential property. Sell your house as-is, on your timeline.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "name": "primehomebuyers-site",
+  "version": "1.0.0",
+  "description": "Public marketing site for PrimeHome Buyers",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node server.js",
+    "build": "echo 'Static site ready'",
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "express": "^4.21.2"
+  }
+}
