@@ -441,17 +441,44 @@ function initExitIntentPopup() {
       }
 
       var submitBtn = form.querySelector('button[type="submit"]');
+      var originalLabel = submitBtn ? submitBtn.textContent : '';
       if (submitBtn) {
         submitBtn.disabled = true;
-        submitBtn.textContent = 'Sending Guide...';
+        submitBtn.textContent = 'Sending...';
       }
 
-      // Simulate instantaneous guide dispatch & store download state
-      setTimeout(function () {
-        form.hidden = true;
-        if (successBox) successBox.hidden = false;
-        sessionStorage.setItem(STORAGE_KEY, 'downloaded');
-      }, 700);
+      // This used to be a setTimeout that showed the success panel and threw
+      // the address away -- the comment on it read "simulate instantaneous
+      // guide dispatch". Every person who filled this in was told to check
+      // their inbox and got nothing, and the lead was lost. It now actually
+      // posts, and only claims success when the server confirms the record.
+      postJson('site-lead-submit', {
+        kind: 'guide_request',
+        email: emailVal,
+        source_url: window.location.href
+      }).then(function (r) {
+        if (r.ok && r.data && r.data.ok) {
+          form.hidden = true;
+          if (successBox) successBox.hidden = false;
+          sessionStorage.setItem(STORAGE_KEY, 'requested');
+          return;
+        }
+        if (errEl) {
+          errEl.textContent = (r.data && r.data.error)
+            || 'We could not save that. Please email support@primehomebuyers.casa instead.';
+          errEl.hidden = false;
+        }
+      }).catch(function () {
+        if (errEl) {
+          errEl.textContent = 'We could not reach our server. Please email support@primehomebuyers.casa instead.';
+          errEl.hidden = false;
+        }
+      }).then(function () {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          submitBtn.textContent = originalLabel;
+        }
+      });
     });
   }
 }
