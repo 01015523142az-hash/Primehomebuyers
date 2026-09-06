@@ -36,7 +36,8 @@ PHONE = "307-441-5766"      # voice
 SMS = "312-638-0895"        # the 10DLC-registered messaging number
 EMAIL = "support@primehomebuyers.casa"
 SITE = "primehomebuyers.casa"
-ADDRESS = "5830 E 2nd St, Casper, WY 82609"
+ADDRESS = "5830 E 2nd St, Ste 7000 #30973, Casper, WY 82609"
+ENTITY = "Proptech AI LLC"   # PrimeHome Buyers is a trading name of this entity
 
 S = {
     "title": ParagraphStyle("title", fontName="Helvetica-Bold", fontSize=30, leading=35,
@@ -362,8 +363,8 @@ def build():
     f += [contact, Spacer(1, 34)]
 
     disc = Table([[Paragraph(
-        "<b>Important.</b> PrimeHome Buyers is a private buyer of residential real "
-        "estate. We are not a real estate brokerage and we do not represent you. We "
+        "<b>Important.</b> PrimeHome Buyers is a trading name of " + ENTITY + ", a "
+        "private buyer of residential real estate. We are not a real estate brokerage and we do not represent you. We "
         "are not a lender, a law firm, an accountancy practice or a financial adviser. "
         "Nothing in this guide is legal, tax or financial advice, and nothing in it is "
         "an offer to buy any particular property. Laws on tenancies, evictions and "
