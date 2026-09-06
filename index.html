@@ -3,6 +3,14 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
+<!-- Force HTTPS. The forms post to an API whose CORS allowlist is https-only,
+     so a page served over plain http fails the preflight and the visitor sees
+     "We could not reach our server" with no way to tell why. Pages' "Enforce
+     HTTPS" setting covers this too; this is the belt to that pair of braces,
+     and it keeps working if the setting is ever toggled off. Runs before
+     anything else in the document so nothing loads over http first. -->
+<script>(function(){var h=location.hostname;if(location.protocol==='http:'&&h!=='localhost'&&h!=='127.0.0.1'&&h!=='[::1]'){location.replace('https://'+location.host+location.pathname+location.search+location.hash);}})();</script>
+
 <title>PrimeHome Buyers &mdash; Sell your house as-is, on your timeline</title>
 <meta name="description" content="PrimeHome Buyers makes direct cash offers on residential property. No listing, no repairs, no agent commission. Request a no-obligation offer on your home.">
 <link rel="canonical" href="https://primehomebuyers.casa/">
