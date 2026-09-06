@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48" fill="none">
+  <rect width="48" height="48" rx="12" fill="url(#brandGrad)" />
+  <!-- Architectural House Silhouette with Key Hole -->
+  <path d="M24 10L11 20.5V36C11 37.1 11.9 38 13 38H35C36.1 38 37 37.1 37 36V20.5L24 10Z" stroke="#ffffff" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" fill="rgba(255,255,255,0.06)" />
+  <!-- Roof Peak Accent -->
+  <path d="M8 22.5L24 9.5L40 22.5" stroke="#4ade80" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" />
+  <!-- Monogram P & H Interlocking / Doorway Key Accent -->
+  <path d="M19 23V33M19 23H24.5C26 23 27 24 27 25.5C27 27 26 28 24.5 28H19" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+  <path d="M29 23V33M35 23V33M29 28H35" stroke="#c28422" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" />
+  <defs>
+    <linearGradient id="brandGrad" x1="0" y1="0" x2="48" y2="48" gradientUnits="userSpaceOnUse">
+      <stop stop-color="#093d2e" />
+      <stop offset="1" stop-color="#0f5a45" />
+    </linearGradient>
+  </defs>
+</svg>

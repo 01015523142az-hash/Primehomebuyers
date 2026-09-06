@@ -268,6 +268,194 @@ function initFaq() {
   });
 }
 
+/* ------------------------------------------- localized service area map */
+
+var STATE_DATA = {
+  wy: {
+    name: 'Wyoming',
+    badge: 'Corporate Headquarters',
+    metros: 'Casper, Cheyenne, Laramie, Gillette, Sheridan, Rock Springs',
+    avgDays: '7–10 Business Days',
+    titlePartner: 'First American Title & Escrow (Casper)',
+    investorRep: 'Local Principal Acquisition Desk (Casper HQ)',
+    coverageNote: 'Full statewide acquisition for single-family, rural, probate & ranch parcels.'
+  },
+  co: {
+    name: 'Colorado',
+    badge: 'Front Range Hub',
+    metros: 'Denver Metro, Colorado Springs, Fort Collins, Pueblo, Aurora, Greeley',
+    avgDays: '7–12 Business Days',
+    titlePartner: 'Fidelity National Title / Heritage Title (Denver)',
+    investorRep: 'Rocky Mountain Regional Team',
+    coverageNote: 'Active daily purchases across Denver metro, El Paso County, and Larimer County.'
+  },
+  tx: {
+    name: 'Texas',
+    badge: 'Major Acquisition Region',
+    metros: 'Dallas-Fort Worth, Houston Metro, Austin, San Antonio, El Paso',
+    avgDays: '7–14 Business Days',
+    titlePartner: 'Stewart Title Guaranty / Independence Title (Austin/Dallas)',
+    investorRep: 'Lone Star Acquisition Group',
+    coverageNote: 'Direct cash purchases for single-family rentals, inherited homes, and rapid closings.'
+  },
+  fl: {
+    name: 'Florida',
+    badge: 'Sunshine State Hub',
+    metros: 'Tampa Bay, Orlando, Jacksonville, Palm Beach, Fort Myers, Pensacola',
+    avgDays: '8–14 Business Days',
+    titlePartner: 'Old Republic National Title / Florida Escrow',
+    investorRep: 'Gulf & Atlantic Acquisition Desk',
+    coverageNote: 'Specialized in storm-damaged properties, rental tenant transitions, and inherited estates.'
+  }
+};
+
+function initServiceAreaMap() {
+  var tabButtons = document.querySelectorAll('.state-tab-btn');
+  var mapPins = document.querySelectorAll('.map-pin');
+  var titleEl = document.getElementById('stateInfoTitle');
+  var badgeEl = document.getElementById('stateInfoBadge');
+  var metrosEl = document.getElementById('stateInfoMetros');
+  var speedEl = document.getElementById('stateInfoSpeed');
+  var titlePartnerEl = document.getElementById('stateInfoTitlePartner');
+  var noteEl = document.getElementById('stateInfoNote');
+
+  function selectState(stateKey) {
+    var data = STATE_DATA[stateKey];
+    if (!data) return;
+
+    tabButtons.forEach(function (btn) {
+      if (btn.getAttribute('data-state') === stateKey) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    mapPins.forEach(function (pin) {
+      if (pin.getAttribute('data-state') === stateKey) {
+        pin.setAttribute('fill', '#4ade80');
+        pin.setAttribute('r', '8');
+      } else {
+        pin.setAttribute('fill', '#10b981');
+        pin.setAttribute('r', '6');
+      }
+    });
+
+    if (titleEl) titleEl.textContent = data.name;
+    if (badgeEl) badgeEl.textContent = data.badge;
+    if (metrosEl) metrosEl.textContent = data.metros;
+    if (speedEl) speedEl.textContent = data.avgDays;
+    if (titlePartnerEl) titlePartnerEl.textContent = data.titlePartner;
+    if (noteEl) noteEl.textContent = data.coverageNote;
+  }
+
+  tabButtons.forEach(function (btn) {
+    btn.addEventListener('click', function () {
+      var stateKey = btn.getAttribute('data-state');
+      selectState(stateKey);
+    });
+  });
+
+  mapPins.forEach(function (pin) {
+    pin.addEventListener('click', function () {
+      var stateKey = pin.getAttribute('data-state');
+      selectState(stateKey);
+    });
+  });
+}
+
+/* ---------------------------------------------------- exit intent popup */
+
+function initExitIntentPopup() {
+  var backdrop = document.getElementById('exitModalBackdrop');
+  var closeBtn = document.getElementById('exitModalClose');
+  var form = document.getElementById('guideForm');
+  var emailInput = document.getElementById('guideEmail');
+  var successBox = document.getElementById('guideSuccessBox');
+  var errEl = document.getElementById('guideMsg');
+
+  if (!backdrop) return;
+
+  var STORAGE_KEY = 'phb_guide_dismissed_v1';
+  var hasShown = false;
+
+  function showPopup() {
+    if (hasShown) return;
+    if (sessionStorage.getItem(STORAGE_KEY)) return;
+    hasShown = true;
+    backdrop.classList.add('active');
+    backdrop.setAttribute('aria-hidden', 'false');
+  }
+
+  function closePopup() {
+    backdrop.classList.remove('active');
+    backdrop.setAttribute('aria-hidden', 'true');
+    sessionStorage.setItem(STORAGE_KEY, '1');
+  }
+
+  // Trigger 1: Mouse movement leaving viewport towards browser chrome (Desktop)
+  document.addEventListener('mouseleave', function (e) {
+    if (e.clientY <= 15 && !hasShown) {
+      showPopup();
+    }
+  });
+
+  // Trigger 2: Fallback timeout after user has spent 35s on site without requesting offer
+  setTimeout(function () {
+    if (!hasShown && !sessionStorage.getItem(STORAGE_KEY)) {
+      showPopup();
+    }
+  }, 35000);
+
+  if (closeBtn) {
+    closeBtn.addEventListener('click', closePopup);
+  }
+
+  backdrop.addEventListener('click', function (e) {
+    if (e.target === backdrop) {
+      closePopup();
+    }
+  });
+
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && backdrop.classList.contains('active')) {
+      closePopup();
+    }
+  });
+
+  if (form) {
+    form.addEventListener('submit', function (e) {
+      e.preventDefault();
+      if (errEl) {
+        errEl.hidden = true;
+        errEl.textContent = '';
+      }
+
+      var emailVal = (emailInput && emailInput.value) ? emailInput.value.trim() : '';
+      if (!emailVal || emailVal.indexOf('@') === -1 || emailVal.indexOf('.') === -1) {
+        if (errEl) {
+          errEl.textContent = 'Please enter a valid email address to receive the guide.';
+          errEl.hidden = false;
+        }
+        return;
+      }
+
+      var submitBtn = form.querySelector('button[type="submit"]');
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Sending Guide...';
+      }
+
+      // Simulate instantaneous guide dispatch & store download state
+      setTimeout(function () {
+        form.hidden = true;
+        if (successBox) successBox.hidden = false;
+        sessionStorage.setItem(STORAGE_KEY, 'downloaded');
+      }, 700);
+    });
+  }
+}
+
 /* --------------------------------------------------------------- boot */
 
 document.addEventListener('DOMContentLoaded', function () {
@@ -275,7 +463,10 @@ document.addEventListener('DOMContentLoaded', function () {
   initOptOutForm();
   initCalculator();
   initFaq();
+  initServiceAreaMap();
+  initExitIntentPopup();
 
   var y = document.getElementById('year');
   if (y) y.textContent = new Date().getFullYear();
 });
+
