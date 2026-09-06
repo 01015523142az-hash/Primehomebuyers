@@ -1,0 +1,20 @@
+# Git classified the guide PDF as text and warned it would convert its line
+# endings on checkout. That commit happened to survive byte-identical, but a
+# rebuilt PDF could contain byte sequences that do get mangled, and the file
+# would then be silently corrupt for anyone cloning on Windows.
+#
+# -text disables all end-of-line conversion for these types. Deliberately
+# scoped to binaries rather than setting a repo-wide `* text=auto`, which
+# would renormalise every existing HTML/CSS/JS file in one noisy commit.
+
+*.pdf   -text
+*.png   -text
+*.jpg   -text
+*.jpeg  -text
+*.gif   -text
+*.ico   -text
+*.webp  -text
+*.woff  -text
+*.woff2 -text
+*.ttf   -text
+*.otf   -text
