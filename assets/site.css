@@ -1915,3 +1915,52 @@ a:hover {
   }
 }
 
+
+
+/* ---------------------------------------------- nationwide state grid ---
+   Replaces the four-state tab strip. Fifty-one chips need to stay scannable,
+   so they are grouped by census region and wrap freely rather than sitting in
+   a fixed grid -- state names differ enormously in length and a rigid grid
+   leaves either huge gaps or truncated labels. */
+.state-region-wrap {
+  background: var(--ground);
+  border: 1px solid var(--line);
+  border-radius: 14px;
+  padding: 1.4rem 1.5rem;
+  max-height: 460px;
+  overflow-y: auto;
+}
+.state-region-group + .state-region-group { margin-top: 1.35rem; }
+.state-region-title {
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  font-weight: 700;
+  color: var(--ink-faint);
+  margin: 0 0 0.6rem;
+}
+.state-chip-row { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+.state-chip {
+  font: inherit;
+  font-size: 0.83rem;
+  font-weight: 500;
+  line-height: 1.2;
+  padding: 0.42rem 0.75rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-dark);
+  background: var(--paper);
+  color: var(--ink-body);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s, border-color 0.15s;
+}
+.state-chip:hover { border-color: var(--brand); color: var(--brand); }
+.state-chip:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.state-chip.active {
+  background: var(--brand);
+  border-color: var(--brand);
+  color: #fff;
+  font-weight: 600;
+}
+@media (max-width: 860px) {
+  .state-region-wrap { max-height: none; }
+}

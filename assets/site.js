@@ -270,98 +270,113 @@ function initFaq() {
 
 /* ------------------------------------------- localized service area map */
 
-var STATE_DATA = {
-  wy: {
-    name: 'Wyoming',
-    badge: 'Corporate Headquarters',
-    metros: 'Casper, Cheyenne, Laramie, Gillette, Sheridan, Rock Springs',
-    avgDays: '7–10 Business Days',
-    titlePartner: 'First American Title & Escrow (Casper)',
-    investorRep: 'Local Principal Acquisition Desk (Casper HQ)',
-    coverageNote: 'Full statewide acquisition for single-family, rural, probate & ranch parcels.'
-  },
-  co: {
-    name: 'Colorado',
-    badge: 'Front Range Hub',
-    metros: 'Denver Metro, Colorado Springs, Fort Collins, Pueblo, Aurora, Greeley',
-    avgDays: '7–12 Business Days',
-    titlePartner: 'Fidelity National Title / Heritage Title (Denver)',
-    investorRep: 'Rocky Mountain Regional Team',
-    coverageNote: 'Active daily purchases across Denver metro, El Paso County, and Larimer County.'
-  },
-  tx: {
-    name: 'Texas',
-    badge: 'Major Acquisition Region',
-    metros: 'Dallas-Fort Worth, Houston Metro, Austin, San Antonio, El Paso',
-    avgDays: '7–14 Business Days',
-    titlePartner: 'Stewart Title Guaranty / Independence Title (Austin/Dallas)',
-    investorRep: 'Lone Star Acquisition Group',
-    coverageNote: 'Direct cash purchases for single-family rentals, inherited homes, and rapid closings.'
-  },
-  fl: {
-    name: 'Florida',
-    badge: 'Sunshine State Hub',
-    metros: 'Tampa Bay, Orlando, Jacksonville, Palm Beach, Fort Myers, Pensacola',
-    avgDays: '8–14 Business Days',
-    titlePartner: 'Old Republic National Title / Florida Escrow',
-    investorRep: 'Gulf & Atlantic Acquisition Desk',
-    coverageNote: 'Specialized in storm-damaged properties, rental tenant transitions, and inherited estates.'
-  }
-};
+/* ------------------------------------------------- nationwide coverage */
+/*
+ * Every US state and DC. This replaced a four-state list in which each state
+ * carried a named title company and a named internal team -- "Stewart Title
+ * Guaranty / Independence Title (Austin/Dallas)", "Lone Star Acquisition
+ * Group" and so on. None of that was verifiable, and repeating the pattern
+ * fifty times would have meant publishing fifty invented business
+ * relationships on a page that 10DLC vetting reads.
+ *
+ * So the per-state facts are gone and what remains is true everywhere: we
+ * buy statewide, we close through a licensed title company local to the
+ * property, and the office is in Casper. Wyoming keeps the HQ badge because
+ * that one is real -- it is the registered address.
+ */
+var HQ_STATE = 'WY';
+
+var US_REGIONS = [
+  { region: 'West', states: [
+    ['AK','Alaska'], ['AZ','Arizona'], ['CA','California'], ['CO','Colorado'],
+    ['HI','Hawaii'], ['ID','Idaho'], ['MT','Montana'], ['NV','Nevada'],
+    ['NM','New Mexico'], ['OR','Oregon'], ['UT','Utah'], ['WA','Washington'],
+    ['WY','Wyoming']
+  ]},
+  { region: 'Midwest', states: [
+    ['IL','Illinois'], ['IN','Indiana'], ['IA','Iowa'], ['KS','Kansas'],
+    ['MI','Michigan'], ['MN','Minnesota'], ['MO','Missouri'], ['NE','Nebraska'],
+    ['ND','North Dakota'], ['OH','Ohio'], ['SD','South Dakota'], ['WI','Wisconsin']
+  ]},
+  { region: 'South', states: [
+    ['AL','Alabama'], ['AR','Arkansas'], ['DE','Delaware'],
+    ['DC','District of Columbia'], ['FL','Florida'], ['GA','Georgia'],
+    ['KY','Kentucky'], ['LA','Louisiana'], ['MD','Maryland'],
+    ['MS','Mississippi'], ['NC','North Carolina'], ['OK','Oklahoma'],
+    ['SC','South Carolina'], ['TN','Tennessee'], ['TX','Texas'],
+    ['VA','Virginia'], ['WV','West Virginia']
+  ]},
+  { region: 'Northeast', states: [
+    ['CT','Connecticut'], ['ME','Maine'], ['MA','Massachusetts'],
+    ['NH','New Hampshire'], ['NJ','New Jersey'], ['NY','New York'],
+    ['PA','Pennsylvania'], ['RI','Rhode Island'], ['VT','Vermont']
+  ]}
+];
 
 function initServiceAreaMap() {
-  var tabButtons = document.querySelectorAll('.state-tab-btn');
-  var mapPins = document.querySelectorAll('.map-pin');
+  var grid = document.getElementById('stateRegionGrid');
   var titleEl = document.getElementById('stateInfoTitle');
   var badgeEl = document.getElementById('stateInfoBadge');
-  var metrosEl = document.getElementById('stateInfoMetros');
-  var speedEl = document.getElementById('stateInfoSpeed');
+  var coverageEl = document.getElementById('stateInfoCoverage');
   var titlePartnerEl = document.getElementById('stateInfoTitlePartner');
   var noteEl = document.getElementById('stateInfoNote');
+  if (!grid) return;
 
-  function selectState(stateKey) {
-    var data = STATE_DATA[stateKey];
-    if (!data) return;
+  var byCode = {};
 
-    tabButtons.forEach(function (btn) {
-      if (btn.getAttribute('data-state') === stateKey) {
-        btn.classList.add('active');
-      } else {
-        btn.classList.remove('active');
-      }
+  function selectState(code) {
+    var name = byCode[code];
+    if (!name) return;
+
+    grid.querySelectorAll('.state-chip').forEach(function (b) {
+      b.classList.toggle('active', b.getAttribute('data-state') === code);
+      b.setAttribute('aria-pressed', b.getAttribute('data-state') === code ? 'true' : 'false');
     });
 
-    mapPins.forEach(function (pin) {
-      if (pin.getAttribute('data-state') === stateKey) {
-        pin.setAttribute('fill', '#4ade80');
-        pin.setAttribute('r', '8');
-      } else {
-        pin.setAttribute('fill', '#10b981');
-        pin.setAttribute('r', '6');
-      }
-    });
-
-    if (titleEl) titleEl.textContent = data.name;
-    if (badgeEl) badgeEl.textContent = data.badge;
-    if (metrosEl) metrosEl.textContent = data.metros;
-    if (speedEl) speedEl.textContent = data.avgDays;
-    if (titlePartnerEl) titlePartnerEl.textContent = data.titlePartner;
-    if (noteEl) noteEl.textContent = data.coverageNote;
+    if (titleEl) titleEl.textContent = name;
+    if (badgeEl) badgeEl.hidden = (code !== HQ_STATE);
+    if (coverageEl) coverageEl.textContent = 'Statewide';
+    if (titlePartnerEl) titlePartnerEl.textContent = 'A licensed title company local to the property';
+    if (noteEl) {
+      noteEl.textContent = 'We buy single-family homes and small residential property throughout '
+        + name + ', including inherited, tenant-occupied and deferred-maintenance parcels.';
+    }
   }
 
-  tabButtons.forEach(function (btn) {
-    btn.addEventListener('click', function () {
-      var stateKey = btn.getAttribute('data-state');
-      selectState(stateKey);
+  // Built in JS rather than written out as markup: fifty-one chips of static
+  // HTML is a lot of page weight for something with one shape.
+  US_REGIONS.forEach(function (group) {
+    var wrap = document.createElement('div');
+    wrap.className = 'state-region-group';
+
+    var h = document.createElement('h4');
+    h.className = 'state-region-title';
+    h.textContent = group.region;
+    wrap.appendChild(h);
+
+    var row = document.createElement('div');
+    row.className = 'state-chip-row';
+
+    group.states.forEach(function (pair) {
+      var code = pair[0], name = pair[1];
+      byCode[code] = name;
+
+      var b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'state-chip';
+      b.setAttribute('data-state', code);
+      b.setAttribute('aria-pressed', 'false');
+      b.title = name;
+      b.textContent = code === HQ_STATE ? name + ' (HQ)' : name;
+      b.addEventListener('click', function () { selectState(code); });
+      row.appendChild(b);
     });
+
+    wrap.appendChild(row);
+    grid.appendChild(wrap);
   });
 
-  mapPins.forEach(function (pin) {
-    pin.addEventListener('click', function () {
-      var stateKey = pin.getAttribute('data-state');
-      selectState(stateKey);
-    });
-  });
+  selectState(HQ_STATE);
 }
 
 /* ---------------------------------------------------- exit intent popup */
